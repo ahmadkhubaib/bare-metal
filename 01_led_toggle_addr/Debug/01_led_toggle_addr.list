@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  000012d8  2**0
                   CONTENTS, READONLY
- 12 .debug_info   00000078  00000000  00000000  00001308  2**0
+ 12 .debug_info   000000b7  00000000  00000000  00001308  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00000060  00000000  00000000  00001380  2**0
+ 13 .debug_abbrev 0000006b  00000000  00000000  000013bf  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000048  00000000  00000000  000013e0  2**3
+ 14 .debug_aranges 00000048  00000000  00000000  00001430  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 0000002c  00000000  00000000  00001428  2**0
+ 15 .debug_rnglists 0000002c  00000000  00000000  00001478  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00000b4f  00000000  00000000  00001454  2**0
+ 16 .debug_macro  00000ff4  00000000  00000000  000014a4  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   000000da  00000000  00000000  00001fa3  2**0
+ 17 .debug_line   0000042f  00000000  00000000  00002498  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    00003131  00000000  00000000  0000207d  2**0
+ 18 .debug_str    00003efc  00000000  00000000  000028c7  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000051ae  2**0
+ 19 .comment      00000043  00000000  00000000  000067c3  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00000054  00000000  00000000  000051f4  2**2
+ 20 .debug_frame  00000054  00000000  00000000  00006808  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000065  00000000  00000000  00005248  2**0
+ 21 .debug_line_str 00000065  00000000  00000000  0000685c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -79,10 +79,10 @@ Disassembly of section .text:
  80001d4:	080002b8 	.word	0x080002b8
 
 080001d8 <main>:
-
-#define GPIO_A_EN						(1U<<0)
-#define LED_PIN_5						(1U<<5)
-
+	__IO uint32_t DCKCFGR; /* !< RCC Dedicated Clocks Configuration Register, Address offset: 0x8C */
+	__IO uint32_t CKGATENR; /* !< RCC Clocks Gating Control Register, Address offset: 0x90 */
+	__IO uint32_t DCKCFGR2; /* !< RCC Dedicated Clocks Configuration Register 2, Address offset: 0x94 */
+} RCC_TypeDef;
 
 int main(void){
  80001d8:	b480      	push	{r7}
@@ -97,7 +97,7 @@ int main(void){
  80001e6:	6013      	str	r3, [r2, #0]
 
 	// set port A pin 5 as output
-	GPIO_MODE_R |= (1U<<10); //set bit 10 to 1
+	GPIO_MODE_R |= (1U<<10 ); //set bit 10 to 1
  80001e8:	4b0a      	ldr	r3, [pc, #40]	@ (8000214 <main+0x3c>)
  80001ea:	681b      	ldr	r3, [r3, #0]
  80001ec:	4a09      	ldr	r2, [pc, #36]	@ (8000214 <main+0x3c>)
