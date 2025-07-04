@@ -9,14 +9,7 @@
 
 #define RCC_OFFSET 						(0x3800UL)
 #define RCC_BASE						(AHB1_BASE_ADDR + RCC_OFFSET)
-#define RCC_AHB1ENR_OFFSET 				(0x30UL)
-#define RCC_AHB1EN_R					(*(unsigned volatile int *)(RCC_BASE + RCC_AHB1ENR_OFFSET))
 
-#define MODE_R_OFFSET					(0x00UL)
-#define GPIO_MODE_R						(*(unsigned volatile int *)(GPIO_BASE_ADDR + MODE_R_OFFSET))
-
-#define OD_R_OFFSET						(0x14UL)
-#define GPIO_A_OD_R						(*(unsigned volatile int *)(GPIO_BASE_ADDR + OD_R_OFFSET))
 
 
 #define GPIO_A_EN						(1U<<0)
@@ -32,53 +25,44 @@ typedef struct {
 }GPIO_TypeDef;
 
 typedef struct {
-	__IO uint32_t CR; /* |< RCC Clock control register, Address offset: 0x00 */
-	__IO uint32_t PLLCFGR; /* !< RCC PLL configuration register, Address offset: 0x04 */
-	__IO uint32_t CFGR; /* !< RCC clock configuration register, Address offset: 0x08 */
-	__IO uint32_t CIR; /* < RCC clock interrupt register, Address offset: 0x0C */
-	__IO uint32_t AHB1RSTR; /* < RCC AHB1 peripheral reset register, Address offset: 0x10 */
-	__IO uint32_t AHB2RSTR; /* !< RCC AHB2 peripheral reset register, Address offset: 0x14 */
-	__IO uint32_t AHB3RSTR; /* !< RCC AHB3 peripheral reset register, Address offset: 0x18 */
-	     uint32_t RESERVEDO; /* !< Reserved, 0x1C */
-	__IO uint32_t APBIRSTR; /* !< RCC APB1 peripheral reset register, Address offset: 0x20 */
-	__IO uint32_t APB2RSTR; /* !< RCC APB2 peripheral reset register, Address offset: 0x24 */
-	     uint32_t RESERVED1 [2]; /* !< Reserved, 0x28-0x2C */
+	uint32_t DUMMY[12];
 	__IO uint32_t AHB1ENR; /* !< RCC AHB1 peripheral clock register, Address offset: 0x30 */
-	__IO uint32_t AHB2ENR; /* !< RCC AHB2 peripheral clock register, Address offset: 0x34 */
-	__IO uint32_t AHB3ENR; /* !< RCC AHB3 peripheral clock register, Address offset: 0x38 */
-	     uint32_t RESERVED2; /* !< Reserved, 0x3C */
-	__IO uint32_t APBIENR; /* !< RCC APB1 peripheral clock enable register, Address offset: 0x40 */
-	__IO uint32_t APBENR; /* !< RCC APB2 peripheral clock enable register, Address offset: 0x44 */
-	     uint32_t RESERVED3 [2] ; /* !< Reserved, 0x48-0x4C */
-	__IO uint32_t AHB1LPENR; /* < RCC AHB1 peripheral clock enable in low power mode register, Address offset: 0x50 */
-	__IO uint32_t AHB2LPENR; /* !< RCC AHB2 peripheral clock enable in low power mode register, Address offset: 0x54 */
-	__IO uint32_t AHB3LPENR; /* !< RCC AHB3 peripheral clock enable in low power mode register, Address offset: 0x58 */
-	     uint32_t RESERVED4; /* !< Reserved, 0x5C */
-	__IO uint32_t APBILPENR; /* !< RCC APBl peripheral clock enable in low power mode register, Address offset: 0x60 */
-	__IO uint32_t APB2LPENR; /* !< RCC APB2 peripheral clock enable in low power mode register, Address offset: 0x64 */
-	     uint32_t RESERVED5 [2]; /* !< Reserved, 0x68-0x6C */
-	__IO uint32_t BDCR; /* !< RCC Backup domain control register, Address offset: 0x70 */
-	__IO uint32_t CSR; /* !< RCC clock control & status register, Address offset: 0x74 */
-	     uint32_t RESERVED6[2]; /* !< Reserved, 0x78-0x7C */
-	__IO uint32_t SSCGR; /* !< RCC spread spectrum clock generation register, Address offset: 0x80 */
-	__IO uint32_t PLLI2SCFGR; /* !< RCC PLLI2S configuration register, Address offset: 0x84 */
-	     uint32_t RESERVED7[1]; /* !< Reserved, 0x88 */
-	__IO uint32_t DCKCFGR; /* !< RCC Dedicated Clocks Configuration Register, Address offset: 0x8C */
-	__IO uint32_t CKGATENR; /* !< RCC Clocks Gating Control Register, Address offset: 0x90 */
-	__IO uint32_t DCKCFGR2; /* !< RCC Dedicated Clocks Configuration Register 2, Address offset: 0x94 */
+
 } RCC_TypeDef;
+
+#define RCC		((RCC_TypeDef*) RCC_BASE)
+#define GPIOA	((GPIO_TypeDef*) GPIO_BASE_ADDR)
 
 int main(void){
 
 	// enable clock access to GPIO A port, OR it with GPIO_A_EN to maintain the value of other bits
-	RCC_AHB1EN_R |= GPIO_A_EN;
+
+	// this is functional way
+	// RCC_AHB1EN_R |= GPIO_A_EN;
+
+	//this is with struct
+	RCC->AHB1ENR |= GPIO_A_EN;
 
 	// set port A pin 5 as output
-	GPIO_MODE_R |= (1U<<10 ); //set bit 10 to 1
-	GPIO_MODE_R &=~ (1U<<11); //set bit 11 to 0
+
+	// this is functional way
+	//GPIO_MODE_R |= (1U<<10 ); //set bit 10 to 1
+	//GPIO_MODE_R &=~ (1U<<11); //set bit 11 to 0
+
+	//this is with struct
+	GPIOA->MODER |= (1U<<10 );
+	GPIOA->MODER &=~ (1U<<11);
 
 	while(1){
 		// set port A pin5 as high
-		GPIO_A_OD_R |= LED_PIN_5;
+
+		// this is functional way
+		//GPIO_A_OD_R |= LED_PIN_5;
+
+		//this is with struct
+		GPIOA->ODR ^= LED_PIN_5;
+
+		for(int i=0; i <100000; i++){}
+
 	}
 }
